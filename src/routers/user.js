@@ -3,6 +3,8 @@ const User = require('../models/user')
 const auth = require('../middleware/auth.js');
 
 const router = new express.Router();
+const multer = require('multer');
+
 
 
 router.post('/users', async (req,res) => {
@@ -11,7 +13,8 @@ router.post('/users', async (req,res) => {
     try {
         await user.save();
         const token = await user.generateAuthToken();
-        res.status(201).send({user, token});
+        // res.status(201).send({user, token});
+        res.status(201).send({user,token});
     } catch (e) {
         res.status(400).send(e);
     }  
@@ -93,6 +96,31 @@ router.patch('/users/me', auth, async (req,res) => {
     } catch (e) {
         res.status(400).send(e);
     }
+})
+
+const upload = multer({
+    dest: 'avatars',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload a image'));
+        }
+
+        cb(undefined, true);
+        
+        // cb(new Error('File must be a PDF'));
+        // cb(undefined, true);
+        // cb(undefined, false);
+    } 
+})
+
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+    
+    res.send()
+}, (error ,req, res, next) => {
+    res.status(400).send({ error: error.message});
 })
 
 module.exports = router;

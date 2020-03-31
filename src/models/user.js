@@ -10,17 +10,6 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    password: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength:7,
-        validate(value){
-            if(value.toLowerCase().includes('password')){
-                throw new Error('Passord is invalid');
-            }
-        }
-    },
     email:{
         type: String,
         unique: true,
@@ -30,6 +19,17 @@ const userSchema = new mongoose.Schema({
         validate(value){
             if(!validator.isEmail(value)) {
                 throw new Error('Email is invalid');
+            }
+        }
+    },
+    password: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength:7,
+        validate(value){
+            if(value.toLowerCase().includes('password')){
+                throw new Error('Passord is invalid');
             }
         }
     },
@@ -47,6 +47,8 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }]
+},{
+    timestamps: true
 })
 
 userSchema.virtual('tasks', {
